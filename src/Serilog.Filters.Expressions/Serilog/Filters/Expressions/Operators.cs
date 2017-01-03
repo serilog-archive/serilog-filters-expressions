@@ -58,17 +58,12 @@ namespace Serilog.Filters.Expressions
         public const string OpTotalMilliseconds = "TotalMilliseconds";
         public const string RuntimeOpIsNull = "_Internal_IsNull";
         public const string RuntimeOpIsNotNull = "_Internal_IsNotNull";
-        public const string OpToIsoString = "ToIsoString";
-        public const string OpToTimeString = "ToTimeString";
-        public const string OpToHexString = "ToHexString";
         public const string OpCoalesce = "Coalesce";
-        public const string OpToNumber = "ToNumber";
         public const string IntermediateOpSqlLike = "_Internal_Like";
         public const string IntermediateOpSqlNotLike = "_Internal_NotLike";
         public const string IntermediateOpSqlIs = "_Internal_Is";
         public const string RuntimeOpStrictNot = "_Internal_StrictNot";
         public const string OpSubstring = "Substring";
-        public const string OpToEventType = "ToEventType";
 
         // Breaks the symmetry because there's no other way to express this in SQL.
         public const string OpIndexOfIgnoreCase = "IndexOfIgnoreCase";
