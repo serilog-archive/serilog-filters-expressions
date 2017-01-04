@@ -1,4 +1,4 @@
-# Serilog.Filters.Expressions
+# Serilog.Filters.Expressions [![Build status](https://ci.appveyor.com/api/projects/status/wnh0ig2udlld9oe4?svg=true)](https://ci.appveyor.com/project/serilog/serilog-filters-expressions)
 
 Expression-based event filtering for [Serilog](https://serilog.net).
 
