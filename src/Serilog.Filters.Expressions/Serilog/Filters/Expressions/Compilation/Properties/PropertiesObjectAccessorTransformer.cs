@@ -1,7 +1,7 @@
 ﻿using Serilog.Filters.Expressions.Ast;
 using Serilog.Filters.Expressions.Compilation.Transformations;
 
-namespace Serilog.Filters.Expressions.CompilatProperties
+namespace Serilog.Filters.Expressions.Compilation.Properties
 {
     class PropertiesObjectAccessorTransformer : FilterExpressionIdentityTransformer
     {

@@ -2,6 +2,7 @@
 using Serilog.Filters.Expressions.Ast;
 using Serilog.Filters.Expressions.Compilation.Transformations;
 using Serilog.Filters.Expressions.Runtime;
+using Serilog.Serilog.Filters.Expressions.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,12 +13,6 @@ namespace Serilog.Filters.Expressions.Compilation.Linq
 {
     class LinqExpressionCompiler : FilterExpressionTransformer<Expression<CompiledFilterExpression>>
     {
-        static readonly Type[] NumericTypes = new[] { typeof(sbyte), typeof(byte), typeof(short), typeof(ushort),
-            typeof(int), typeof(uint), typeof(long), typeof(ulong), typeof(float), typeof(double) };
-
-        static readonly Type[] AllowedTypes = new[] { typeof(string), typeof(bool), typeof(TimeSpan), typeof(DateTime),
-            typeof(DateTimeOffset) };
-
         static readonly IDictionary<string, MethodInfo> OperatorMethods = typeof(RuntimeOperators)
             .GetTypeInfo()
             .GetMethods(BindingFlags.Static | BindingFlags.Public)
@@ -101,7 +96,7 @@ namespace Serilog.Filters.Expressions.Compilation.Linq
         protected override Expression<CompiledFilterExpression> Transform(FilterSubpropertyExpression spx)
         {
             var tgv = typeof(LinqExpressionCompiler).GetTypeInfo().GetMethod(nameof(TryGetStructurePropertyValue), BindingFlags.Static | BindingFlags.Public);
-            var norm = typeof(LinqExpressionCompiler).GetTypeInfo().GetMethod(nameof(NormalizeType), BindingFlags.Static | BindingFlags.Public);
+            var norm = typeof(Representation).GetTypeInfo().GetMethod(nameof(Representation.Represent), BindingFlags.Static | BindingFlags.Public);
 
             var recv = Transform(spx.Receiver);
 
@@ -146,7 +141,7 @@ namespace Serilog.Filters.Expressions.Compilation.Linq
             //    if (!str.Properties.TryGetValue(spx.PropertyName, out result))
             //        return Undefined.Value;
 
-            //    return NormalizeType(result);
+            //    return Represent(result);
             //};
         }
 
@@ -197,29 +192,7 @@ namespace Serilog.Filters.Expressions.Compilation.Linq
             if (!context.Properties.TryGetValue(propertyName, out value))
                 return Undefined.Value;
 
-            return NormalizeType(value);
-        }
-
-        // Convert scalars into a small set of primitive types; leave everything else unchanged. This
-        // makes it easier to flow values through operations.
-        public static object NormalizeType(LogEventPropertyValue value)
-        {
-            var sv = value as ScalarValue;
-            if (sv != null)
-            {
-                if (sv.Value == null)
-                    return null;
-
-                if (Array.IndexOf(AllowedTypes, sv.Value.GetType()) != -1)
-                    return sv.Value;
-
-                if (Array.IndexOf(NumericTypes, sv.Value.GetType()) != -1)
-                    return Convert.ChangeType(sv.Value, typeof(decimal));
-
-                return sv.Value.ToString();
-            }
-
-            return value;
+            return Representation.Represent(value);
         }
 
         public static bool TryGetStructurePropertyValue(StructureValue sv, string name, out LogEventPropertyValue value)

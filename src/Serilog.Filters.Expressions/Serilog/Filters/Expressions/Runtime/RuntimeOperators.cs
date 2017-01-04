@@ -1,5 +1,6 @@
 ﻿using Serilog.Events;
 using Serilog.Filters.Expressions.Compilation.Linq;
+using Serilog.Serilog.Filters.Expressions.Runtime;
 using System;
 using System.Globalization;
 using System.Linq;
@@ -348,7 +349,7 @@ namespace Serilog.Filters.Expressions.Runtime
                 if (idx >= arr.Elements.Count())
                     return Undefined.Value;
 
-                return LinqExpressionCompiler.NormalizeType(arr.Elements.ElementAt(idx));
+                return Representation.Represent(arr.Elements.ElementAt(idx));
             }
 
             var dict = items as StructureValue;
@@ -362,7 +363,7 @@ namespace Serilog.Filters.Expressions.Runtime
                 if (!LinqExpressionCompiler.TryGetStructurePropertyValue(dict, s, out value))
                     return Undefined.Value;
 
-                return LinqExpressionCompiler.NormalizeType(value);
+                return Representation.Represent(value);
             }
 
             return Undefined.Value;
@@ -378,13 +379,13 @@ namespace Serilog.Filters.Expressions.Runtime
             SequenceValue arr = items as SequenceValue;
             if (arr != null)
             {
-                return arr.Elements.Any(e => true.Equals(pred(LinqExpressionCompiler.NormalizeType(e))));
+                return arr.Elements.Any(e => true.Equals(pred(Representation.Represent(e))));
             }
 
             var structure = items as StructureValue;
             if (structure != null)
             {
-                return structure.Properties.Any(e => true.Equals(pred(LinqExpressionCompiler.NormalizeType(e.Value))));
+                return structure.Properties.Any(e => true.Equals(pred(Representation.Represent(e.Value))));
             }
 
             return Undefined.Value;
@@ -400,13 +401,13 @@ namespace Serilog.Filters.Expressions.Runtime
             SequenceValue arr = items as SequenceValue;
             if (arr != null)
             {
-                return arr.Elements.All(e => true.Equals(pred(LinqExpressionCompiler.NormalizeType(e))));
+                return arr.Elements.All(e => true.Equals(pred(Representation.Represent(e))));
             }
 
             var structure = items as StructureValue;
             if (structure != null)
             {
-                return structure.Properties.All(e => true.Equals(pred(LinqExpressionCompiler.NormalizeType(e.Value))));
+                return structure.Properties.All(e => true.Equals(pred(Representation.Represent(e.Value))));
             }
 
             return Undefined.Value;
