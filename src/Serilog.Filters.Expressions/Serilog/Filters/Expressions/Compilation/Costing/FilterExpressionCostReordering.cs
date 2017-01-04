@@ -16,6 +16,12 @@ namespace Serilog.Filters.Expressions.Compilation.Costing
 
         protected override FilterExpressionCosting Transform(FilterPropertyExpression px)
         {
+            if (px.PropertyName == "Exception" && px.IsBuiltIn)
+                return new FilterExpressionCosting(px, 100);
+
+            if (px.PropertyName == "Level" && px.IsBuiltIn)
+                return new FilterExpressionCosting(px, 5);
+
             if (px.IsBuiltIn)
                 return new FilterExpressionCosting(px, 1);
 
