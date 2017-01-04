@@ -42,7 +42,7 @@ Add `Filter.ByIncludingOnly(fiterExpression)` or `Filter.ByExcluding(fiterExpres
 
 **Comparisons:** `A = B`, `A <> B`, `A > B`, `A >= B`.
 
-**Text:** `A like 'H%'`, `A like `Hel_o`, `Contains(A, 'H')`, `StartsWith(A, 'H')`, `EndsWith(A, 'H')`, `IndexOf(A, 'H')`.
+**Text:** `A like 'H%'`, `A like 'Hel_o'`, `Contains(A, 'H')`, `StartsWith(A, 'H')`, `EndsWith(A, 'H')`, `IndexOf(A, 'H')`.
 
 **Regular expressions:** _TBC_
 
