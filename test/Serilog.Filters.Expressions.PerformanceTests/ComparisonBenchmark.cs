@@ -15,8 +15,7 @@ namespace Serilog.Filters.Expressions.PerformanceTests
         Func<LogEvent, bool> _trivialFilter, _handwrittenFilter, _expressionFilter;
         readonly LogEvent _event = Some.InformationEvent("{A}", 3);
 
-        [Setup]
-        public void Setup()
+        public ComparisonBenchmark()
         {
             // Just the delegate invocation overhead
             _trivialFilter = evt => true;
