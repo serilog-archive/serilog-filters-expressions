@@ -46,5 +46,5 @@ The syntax is based on SQL, with added support for object structures, arrays, an
 | **Collections** | `A[0] = 'Hello'`, `A[?] = 'Hello'` (any), `StartsWith(A[*], 'H')` (all) |
 | **Maths** | `A + 2`, `A - 2`, `A * 2`, `A % 2` |
 | **Logic** | `not A`, `A and B`, `A or B` |
-| **Grouping | `A * (B + C)` |
+| **Grouping** | `A * (B + C)` |
 | **Other** | `Has(A)`, `TypeOf(A)` |
