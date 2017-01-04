@@ -16,7 +16,7 @@ namespace Serilog.Filters.Expressions.Compilation
 {
     static class FilterExpressionCompiler
     {
-        public static CompiledFilterExpression CompileAndExpose(FilterExpression expression)
+        public static Func<LogEvent, object> CompileAndExpose(FilterExpression expression)
         {
             var actual = expression;
             actual = PropertiesObjectAccessorTransformer.Rewrite(actual);

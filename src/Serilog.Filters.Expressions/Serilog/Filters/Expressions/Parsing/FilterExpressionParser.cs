@@ -10,39 +10,41 @@ namespace Serilog.Filters.Expressions
     {
         static readonly FilterExpressionTokenizer _tokenizer = new FilterExpressionTokenizer();
 
-        public static FilterExpression ParseExact(string query)
+        public static FilterExpression Parse(string filterExpression)
         {
-            if (query == null) throw new ArgumentNullException(nameof(query));
-            return FilterExpressionTokenParsers.Expr.AtEnd().Parse(_tokenizer.Tokenize(query));
+            FilterExpression root;
+            string error;
+            if (!TryParse(filterExpression, out root, out error))
+                throw new ArgumentException(error);
+
+            return root;
         }
 
-        public static bool TryParse(string expression, out FilterExpression root, out string[] errors)
+        public static bool TryParse(string filterExpression, out FilterExpression root, out string error)
         {
-            if (expression == null) throw new ArgumentNullException(nameof(expression));
+            if (filterExpression == null) throw new ArgumentNullException(nameof(filterExpression));
 
-            var tokenList = _tokenizer.TryTokenize(expression);
+            var tokenList = _tokenizer.TryTokenize(filterExpression);
 
             var errorList = new List<string>();
             if (!tokenList.HasValue)
             {
-                errorList.Add(tokenList.ToString());
+                error = tokenList.ToString();
+                root = null;
+                return false;
             }
-            else
+
+            var result = FilterExpressionTokenParsers.Expr.AtEnd().TryParse(tokenList.Value);
+            if (!result.HasValue)
             {
-                var result = FilterExpressionTokenParsers.Expr.AtEnd().TryParse(tokenList.Value);
-                if (result.HasValue)
-                {
-                    root = result.Value;
-                    errors = null;
-                    return true;
-                }
-
-                errorList.Add(result.ToString());
+                error = result.ToString();
+                root = null;
+                return false;
             }
 
-            root = null;
-            errors = errorList.ToArray();
-            return false;
+            root = result.Value;
+            error = null;
+            return true;
         }
     }
 }

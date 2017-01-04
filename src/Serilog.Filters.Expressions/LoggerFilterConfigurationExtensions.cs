@@ -1,6 +1,5 @@
 ﻿using Serilog.Configuration;
 using Serilog.Filters.Expressions;
-using Serilog.Filters.Expressions.Compilation;
 using System;
 
 namespace Serilog
@@ -24,8 +23,7 @@ namespace Serilog
             if (filterExpression == null)
                 throw new ArgumentNullException(nameof(filterExpression));
 
-            var tree = FilterExpressionParser.ParseExact(filterExpression);
-            var compiled = FilterExpressionCompiler.CompileAndExpose(tree);
+            var compiled = FilterLanguage.CreateFilter(filterExpression);
             return loggerFilterConfiguration.ByIncludingOnly(e => true.Equals(compiled(e)));
         }
 
@@ -43,8 +41,7 @@ namespace Serilog
             if (filterExpression == null)
                 throw new ArgumentNullException(nameof(filterExpression));
 
-            var tree = FilterExpressionParser.ParseExact(filterExpression);
-            var compiled = FilterExpressionCompiler.CompileAndExpose(tree);
+            var compiled = FilterLanguage.CreateFilter(filterExpression);
             return loggerFilterConfiguration.ByExcluding(e => true.Equals(compiled(e)));
         }
     }

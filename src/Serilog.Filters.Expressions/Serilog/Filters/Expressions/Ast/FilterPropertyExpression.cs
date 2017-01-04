@@ -13,7 +13,7 @@ namespace Serilog.Filters.Expressions.Ast
             if (propertyName == null) throw new ArgumentNullException(nameof(propertyName));
             _propertyName = propertyName;
             _isBuiltIn = isBuiltIn;
-            _requiresEscape = !FilterExpressionLanguage.IsValidPropertyName(propertyName);
+            _requiresEscape = !FilterLanguage.IsValidPropertyName(propertyName);
         }
 
         public string PropertyName
@@ -29,7 +29,7 @@ namespace Serilog.Filters.Expressions.Ast
         public override string ToString()
         {
             if (_requiresEscape)
-                return $"@Properties['{FilterExpressionLanguage.EscapeStringContent(PropertyName)}']";
+                return $"@Properties['{FilterLanguage.EscapeStringContent(PropertyName)}']";
 
             return (_isBuiltIn ? "@" : "") + PropertyName;
         }

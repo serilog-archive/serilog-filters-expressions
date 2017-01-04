@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Serilog.Events;
+using Serilog.Filters.Expressions.Ast;
+using Serilog.Filters.Expressions.Compilation;
+using System;
 using System.Linq;
 
 namespace Serilog.Filters.Expressions
@@ -6,8 +9,44 @@ namespace Serilog.Filters.Expressions
     /// <summary>
     /// Helper methods to assist with construction of well-formed filters.
     /// </summary>
-    public static class FilterExpressionLanguage
+    public static class FilterLanguage
     {
+        /// <summary>
+        /// Create a log event filter based on the provided expression.
+        /// </summary>
+        /// <param name="expression">A filter expression.</param>
+        /// <returns>A function that evaluates the expression in the context of the log event.</returns>
+        public static Func<LogEvent, object> CreateFilter(string expression)
+        {
+            Func<LogEvent, object> filter;
+            string error;
+            if (!TryCreateFilter(expression, out filter, out error))
+                throw new ArgumentException(error);
+
+            return filter;
+        }
+
+        /// <summary>
+        /// Create a log event filter based on the provided expression.
+        /// </summary>
+        /// <param name="expression">A filter expression.</param>
+        /// <param name="filter">A function that evaluates the expression in the context of the log event.</param>
+        /// <param name="error">The reported error, if compilation was unsuccessful.</param>
+        /// <returns>True if the filter could be created; otherwise, false.</returns>
+        public static bool TryCreateFilter(string expression, out Func<LogEvent, object> filter, out string error)
+        {
+            FilterExpression root;
+            if (!FilterExpressionParser.TryParse(expression, out root, out error))
+            {
+                filter = null;
+                return false;
+            }
+
+            filter = FilterExpressionCompiler.CompileAndExpose(root);
+            error = null;
+            return true;
+        }
+
         /// <summary>
         /// Escape a value that is to appear in a `like` expression.
         /// </summary>

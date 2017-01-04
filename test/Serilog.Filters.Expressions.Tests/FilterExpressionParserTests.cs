@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using System;
+using Xunit;
 
 namespace Serilog.Filters.Expressions.Tests
 {
@@ -36,7 +37,7 @@ namespace Serilog.Filters.Expressions.Tests
         [InlineData("@EventType = 0xC0ffee", "Equal(@EventType,12648430)")]
         public void ValidSyntaxIsAccepted(string input, string expected = null)
         {
-            var roundTrip = FilterExpressionParser.ParseExact(input).ToString();
+            var roundTrip = FilterExpressionParser.Parse(input).ToString();
             Assert.Equal(expected ?? input, roundTrip);
         }
 
@@ -53,7 +54,7 @@ namespace Serilog.Filters.Expressions.Tests
         [InlineData("A = 0x99999999999999999999999999999999999999999999")]
         public void InvalidSyntaxIsRejected(string input)
         {
-            Assert.Throws<Superpower.ParseException>(() => FilterExpressionParser.ParseExact(input));
+            Assert.Throws<ArgumentException>(() => FilterExpressionParser.Parse(input));
         }
     }
 }
