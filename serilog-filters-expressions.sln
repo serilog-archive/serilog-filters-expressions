@@ -14,6 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "global", "global", "{24B112
 		global.json = global.json
 		LICENSE = LICENSE
 		README.md = README.md
+		RunPerfTests.ps1 = RunPerfTests.ps1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "example", "example", "{BD94A77E-34B1-478E-B921-E87A5F71B574}"
