@@ -2,63 +2,63 @@ using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
 using Serilog.Events;
 using Serilog.Filters.Expressions.PerformanceTests.Support;
+using System;
+using Xunit;
 
 namespace Serilog.Filters.Expressions.PerformanceTests
 {
     /// <summary>
-    /// Tests the overhead of determining the active logging level.
+    /// Tests the performance of various filtering mechanisms.
     /// </summary>
     public class ComparisonBenchmark
     {
-        ILogger _trivialFilter, _handwrittenFilter, _expressionFilter;
+        Func<LogEvent, bool> _trivialFilter, _handwrittenFilter, _expressionFilter;
         readonly LogEvent _event = Some.InformationEvent("{A}", 3);
 
         [Setup]
         public void Setup()
         {
-            _trivialFilter = new LoggerConfiguration()
-                .Filter.ByIncludingOnly(evt => true)
-                .WriteTo.Sink(new NullSink())
-                .CreateLogger();
+            // Just the delegate invocation overhead
+            _trivialFilter = evt => true;
 
-            _handwrittenFilter = new LoggerConfiguration()
-                .Filter.ByIncludingOnly(evt =>
+            // `A == 3`, the old way
+            _handwrittenFilter = evt =>
+            {
+                LogEventPropertyValue a;
+                if (evt.Properties.TryGetValue("A", out a) &&
+                        a is ScalarValue &&
+                        ((ScalarValue)a).Value is int)
                 {
-                    LogEventPropertyValue a;
-                    if (!(evt.Properties.TryGetValue("A", out a) &&
-                          a is ScalarValue &&
-                          ((ScalarValue)a).Value is int))
-                    {
-                        return false;
-                    }
-
                     return (int)((ScalarValue)a).Value == 3;
-                })
-                .WriteTo.Sink(new NullSink())
-                .CreateLogger();
+                }
 
-            _expressionFilter = new LoggerConfiguration()
-                .Filter.ByIncludingOnly("A = 3")
-                .WriteTo.Sink(new NullSink())
-                .CreateLogger();
+                return false;
+            };
+
+            // The code we're interested in; the `true.Equals()` overhead is normally added when
+            // this is used with Serilog
+            var compiled = FilterLanguage.CreateFilter("A = 3");
+            _expressionFilter = evt => true.Equals(compiled(evt));
+
+            Assert.True(_trivialFilter(_event) && _handwrittenFilter(_event) && _expressionFilter(_event));
         }
 
         [Benchmark]
         public void TrivialFilter()
         {
-            _trivialFilter.Write(_event);
+            _trivialFilter(_event);
         }  
         
         [Benchmark(Baseline = true)]
         public void HandwrittenFilter()
         {
-            _handwrittenFilter.Write(_event);
+            _handwrittenFilter(_event);
         } 
                 
         [Benchmark]
         public void ExpressionFilter()
         {
-            _expressionFilter.Write(_event);
+            _expressionFilter(_event);
         }
     }
 }
