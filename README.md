@@ -27,7 +27,7 @@ Log.CloseAndFlush();
 Install _Serilog.Filters.Expressions_ from NuGet:
 
 ```powershell
-Install-Package Serilog.Filters.Expressions
+Install-Package Serilog.Filters.Expressions -Pre
 ```
 
 Add `Filter.ByIncludingOnly(fiterExpression)` or `Filter.ByExcluding(fiterExpression)` calls to `LoggerConfiguration`.
@@ -48,3 +48,14 @@ The syntax is based on SQL, with added support for object structures, arrays, an
 | **Logic** | `not A`, `A and B`, `A or B` |
 | **Grouping** | `A * (B + C)` |
 | **Other** | `Has(A)`, `TypeOf(A)` |
+
+### XML configuration
+
+**Note, the syntax below depends on [an unreleased Serilog version](https://github.com/serilog/serilog/pull/925).**
+
+```xml
+  <add key="serilog:using:FilterExpressions" value="Serilog.Filters.Expressions" />
+  <add key="serilog:Filter:ByExcluding.expression" value="Name = 'World'" />
+```
+
+
