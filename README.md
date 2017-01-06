@@ -37,7 +37,7 @@ Add `Filter.ByIncludingOnly(fiterExpression)` or `Filter.ByExcluding(fiterExpres
 The syntax is based on SQL, with added support for object structures, arrays, and regular expressions.
 
 | Category | Examples |
-| --- | --- |
+| :--- | :--- |
 | **Literals** | `123`, `123.4`, `'Hello'`, `true`, `false`, `null` |
 | **Properties** | `A`, `A.B`, `@Level`, `@Timestamp`, `@Exception`, `@Message`, `@MessageTemplate`, `@Properties['A-b-c']` |
 | **Comparisons** | `A = B`, `A <> B`, `A > B`, `A >= B`, `A is null`, `A is not null` |
