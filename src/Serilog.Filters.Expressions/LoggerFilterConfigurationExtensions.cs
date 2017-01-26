@@ -38,5 +38,20 @@ namespace Serilog
             var compiled = FilterLanguage.CreateFilter(expression);
             return loggerFilterConfiguration.ByExcluding(e => true.Equals(compiled(e)));
         }
+
+        /// <summary>
+        /// Use a <see cref="LoggingFilterSwitch"/> to dynamically control filtering.
+        /// </summary>
+        /// <param name="loggerFilterConfiguration">Filter configuration.</param>
+        /// <param name="switch">A <see cref="LoggingFilterSwitch"/> that can be used to dynamically control
+        /// log filtering.</param>
+        /// <returns>The underlying <see cref="LoggerConfiguration"/>.</returns>
+        public static LoggerConfiguration ControlledBy(this LoggerFilterConfiguration loggerFilterConfiguration, LoggingFilterSwitch @switch)
+        {
+            if (loggerFilterConfiguration == null) throw new ArgumentNullException(nameof(loggerFilterConfiguration));
+            if (@switch == null) throw new ArgumentNullException(nameof(@switch));
+
+            return loggerFilterConfiguration.With(@switch);
+        }
     }
 }
