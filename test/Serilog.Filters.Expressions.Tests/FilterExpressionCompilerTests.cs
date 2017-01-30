@@ -104,6 +104,7 @@ namespace Serilog.Filters.Expressions.Tests
                 Some.InformationEvent("Checking out {@Cart}", new { Total = 20 }),
                 Some.InformationEvent("Checking out {@Cart}", new { Total = 5 }));
         }
+
         static void AssertFiltering(string expression, LogEvent match, params LogEvent[] noMatches)
         {
             var sink = new CollectingSink();
