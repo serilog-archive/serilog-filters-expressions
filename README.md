@@ -55,7 +55,7 @@ Note, the syntax below depends on features in Serilog 2.4+.
 
 ```xml
   <add key="serilog:using:FilterExpressions" value="Serilog.Filters.Expressions" />
-  <add key="serilog:Filter:ByExcluding.expression" value="Name = 'World'" />
+  <add key="serilog:filter:ByExcluding.expression" value="Name = 'World'" />
 ```
 
 
