@@ -10,9 +10,7 @@
       "version": "1.0.1"
     },
     "Serilog.Filters.Expressions": {"target": "project"},
-    "Serilog": "2.3.0",
-    "Serilog.Sinks.Literate": "2.0.0",
-    "Superpower": "1.0.0"
+    "Serilog.Sinks.Literate": "2.0.0"
   },
 
   "frameworks": {
