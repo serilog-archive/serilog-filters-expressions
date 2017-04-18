@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0-*",
+  "version": "1.0.1-*",
   "description": "Expression-based event filtering for Serilog.",
   "authors": [ "Serilog Contributors" ],
   "packOptions": {
@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "Serilog": "2.3.0",
-    "Superpower": "1.0.0"
+    "Superpower": "1.0.1"
   },
   "buildOptions": {
     "keyFile": "../../assets/Serilog.snk",
