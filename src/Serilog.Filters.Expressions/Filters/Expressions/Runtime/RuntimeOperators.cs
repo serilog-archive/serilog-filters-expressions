@@ -1,6 +1,5 @@
 ﻿using Serilog.Events;
 using Serilog.Filters.Expressions.Compilation.Linq;
-using Serilog.Serilog.Filters.Expressions.Runtime;
 using System;
 using System.Globalization;
 using System.Linq;
@@ -252,12 +251,15 @@ namespace Serilog.Filters.Expressions.Runtime
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static object Length(object corpus)
+        public static object Length(object arg)
         {
-            var ctx = corpus as string;
-            if (ctx == null)
-                return Undefined.Value;
-            return (decimal)ctx.Length;
+            if (arg is string str)
+                return (decimal)str.Length;
+
+            if (arg is SequenceValue seq)
+                return (decimal) seq.Elements.Count;
+
+            return Undefined.Value;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

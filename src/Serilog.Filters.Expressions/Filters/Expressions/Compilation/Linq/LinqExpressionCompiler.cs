@@ -2,7 +2,6 @@
 using Serilog.Filters.Expressions.Ast;
 using Serilog.Filters.Expressions.Compilation.Transformations;
 using Serilog.Filters.Expressions.Runtime;
-using Serilog.Serilog.Filters.Expressions.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Linq;

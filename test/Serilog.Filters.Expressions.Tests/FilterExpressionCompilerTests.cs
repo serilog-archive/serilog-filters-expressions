@@ -105,6 +105,17 @@ namespace Serilog.Filters.Expressions.Tests
                 Some.InformationEvent("Checking out {@Cart}", new { Total = 5 }));
         }
 
+
+        [Fact]
+        public void SequenceLengthCanBeDetermined()
+        {
+            AssertFiltering("length(Items) > 1",
+                // ReSharper disable once CoVariantArrayConversion
+                Some.InformationEvent("Checking out {Items}", new string[] { "pears", "apples" }),
+                // ReSharper disable once CoVariantArrayConversion
+                Some.InformationEvent("Checking out {Items}", new string[] { "pears" }));
+        }
+
         static void AssertFiltering(string expression, LogEvent match, params LogEvent[] noMatches)
         {
             var sink = new CollectingSink();

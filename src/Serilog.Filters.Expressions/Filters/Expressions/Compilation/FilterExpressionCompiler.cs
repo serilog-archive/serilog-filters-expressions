@@ -7,7 +7,7 @@ using Serilog.Filters.Expressions.Compilation.Linq;
 using Serilog.Filters.Expressions.Compilation.Text;
 using Serilog.Filters.Expressions.Compilation.Wildcards;
 using Serilog.Filters.Expressions.Compilation.Properties;
-using Serilog.Serilog.Filters.Expressions.Runtime;
+using Serilog.Filters.Expressions.Runtime;
 using System;
 
 namespace Serilog.Filters.Expressions.Compilation
