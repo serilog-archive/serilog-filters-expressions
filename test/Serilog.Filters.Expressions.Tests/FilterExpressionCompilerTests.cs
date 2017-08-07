@@ -110,10 +110,8 @@ namespace Serilog.Filters.Expressions.Tests
         public void SequenceLengthCanBeDetermined()
         {
             AssertFiltering("length(Items) > 1",
-                // ReSharper disable once CoVariantArrayConversion
-                Some.InformationEvent("Checking out {Items}", new string[] { "pears", "apples" }),
-                // ReSharper disable once CoVariantArrayConversion
-                Some.InformationEvent("Checking out {Items}", new string[] { "pears" }));
+                Some.InformationEvent("Checking out {Items}", new object[] { new[] { "pears", "apples" }}),
+                Some.InformationEvent("Checking out {Items}", new object[] { new[] { "pears" }}));
         }
 
         static void AssertFiltering(string expression, LogEvent match, params LogEvent[] noMatches)
