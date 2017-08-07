@@ -105,6 +105,15 @@ namespace Serilog.Filters.Expressions.Tests
                 Some.InformationEvent("Checking out {@Cart}", new { Total = 5 }));
         }
 
+
+        [Fact]
+        public void SequenceLengthCanBeDetermined()
+        {
+            AssertFiltering("length(Items) > 1",
+                Some.InformationEvent("Checking out {Items}", new object[] { new[] { "pears", "apples" }}),
+                Some.InformationEvent("Checking out {Items}", new object[] { new[] { "pears" }}));
+        }
+
         static void AssertFiltering(string expression, LogEvent match, params LogEvent[] noMatches)
         {
             var sink = new CollectingSink();

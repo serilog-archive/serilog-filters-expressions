@@ -1,9 +1,8 @@
 ﻿using Serilog.Events;
-using Serilog.Filters.Expressions.Runtime;
 using System;
 using System.Linq;
 
-namespace Serilog.Serilog.Filters.Expressions.Runtime
+namespace Serilog.Filters.Expressions.Runtime
 {
     static class Representation
     {
