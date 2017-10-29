@@ -59,5 +59,10 @@ namespace Serilog.Filters.Expressions.Compilation.Wildcards
             // Must be RHS of ElementAt()
             return null;
         }
+
+        protected override FilterCallExpression Transform(FilterArrayExpression ax)
+        {
+            return null;
+        }
     }
 }

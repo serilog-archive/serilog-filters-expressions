@@ -3,6 +3,8 @@ using Serilog.Filters.Expressions.Tests.Support;
 using System.Linq;
 using Xunit;
 
+// ReSharper disable CoVariantArrayConversion
+
 namespace Serilog.Filters.Expressions.Tests
 {
     public class FilterExpressionCompilerTests
@@ -112,6 +114,23 @@ namespace Serilog.Filters.Expressions.Tests
             AssertFiltering("length(Items) > 1",
                 Some.InformationEvent("Checking out {Items}", new object[] { new[] { "pears", "apples" }}),
                 Some.InformationEvent("Checking out {Items}", new object[] { new[] { "pears" }}));
+        }
+
+        [Fact]
+        public void InMatchesLiterals()
+        {
+            AssertFiltering("@Level in ['Warning', 'Error']",
+                Some.LogEvent(LogEventLevel.Error, "Hello"),
+                Some.InformationEvent("Hello"));
+        }
+
+        [Fact]
+        public void InExaminesSequenceValues()
+        {
+            AssertFiltering("5 not in Numbers",
+                Some.InformationEvent("{Numbers}", new object[] {new []{1, 2, 3}}),
+                Some.InformationEvent("{Numbers}", new object[] { new [] { 1, 5, 3 }}),
+                Some.InformationEvent());
         }
 
         static void AssertFiltering(string expression, LogEvent match, params LogEvent[] noMatches)

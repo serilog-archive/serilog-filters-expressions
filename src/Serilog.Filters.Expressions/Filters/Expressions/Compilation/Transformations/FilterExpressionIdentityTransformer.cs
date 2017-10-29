@@ -47,5 +47,10 @@ namespace Serilog.Filters.Expressions.Compilation.Transformations
         {
             return wx;
         }
+
+        protected override FilterExpression Transform(FilterArrayExpression ax)
+        {
+            return new FilterArrayExpression(ax.Elements.Select(Transform).ToArray());
+        }
     }
 }

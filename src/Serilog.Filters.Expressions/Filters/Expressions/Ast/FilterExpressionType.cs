@@ -10,6 +10,7 @@
         Subproperty,
         Wildcard,
         Parameter,
-        Lambda
+        Lambda,
+        Array
     }
 }

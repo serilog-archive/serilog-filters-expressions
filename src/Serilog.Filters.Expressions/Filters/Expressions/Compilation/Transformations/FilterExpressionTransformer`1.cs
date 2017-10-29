@@ -25,6 +25,8 @@ namespace Serilog.Filters.Expressions.Compilation.Transformations
                     return Transform((FilterParameterExpression)expression);
                 case FilterExpressionType.Wildcard:
                     return Transform((FilterWildcardExpression)expression);
+                case FilterExpressionType.Array:
+                    return Transform((FilterArrayExpression)expression);
                 default:
                     throw new ArgumentException(expression.Type + " is not a valid expression type");
             }
@@ -38,5 +40,6 @@ namespace Serilog.Filters.Expressions.Compilation.Transformations
         protected abstract TResult Transform(FilterLambdaExpression lmx);
         protected abstract TResult Transform(FilterParameterExpression prx);
         protected abstract TResult Transform(FilterWildcardExpression wx);
+        protected abstract TResult Transform(FilterArrayExpression ax);
     }
 }

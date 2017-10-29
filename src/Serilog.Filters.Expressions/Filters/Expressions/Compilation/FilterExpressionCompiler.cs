@@ -9,6 +9,8 @@ using Serilog.Filters.Expressions.Compilation.Wildcards;
 using Serilog.Filters.Expressions.Compilation.Properties;
 using Serilog.Filters.Expressions.Runtime;
 using System;
+using Serilog.Filters.Expressions.Compilation.Arrays;
+using Serilog.Filters.Expressions.Compilation.In;
 
 namespace Serilog.Filters.Expressions.Compilation
 {
@@ -18,6 +20,8 @@ namespace Serilog.Filters.Expressions.Compilation
         {
             var actual = expression;
             actual = PropertiesObjectAccessorTransformer.Rewrite(actual);
+            actual = FilterExpressionConstantArrayEvaluator.Evaluate(actual);
+            actual = FilterExpressionNotInRewriter.Rewrite(actual);
             actual = WildcardComprehensionTransformer.Expand(actual);
             actual = LikeOperatorTransformer.Rewrite(actual);
             actual = IsOperatorTransformer.Rewrite(actual);
