@@ -160,7 +160,7 @@ namespace Serilog.Filters.Expressions.Compilation.Linq
             if (px.IsBuiltIn)
             {
                 if (px.PropertyName == "Level")
-                    return context => context.Level.ToString() ?? "Information";
+                    return context => context.Level.ToString();
 
                 if (px.PropertyName == "Message")
                     return context => NormalizeBaseDocumentProperty(context.RenderMessage(null));
@@ -255,6 +255,15 @@ namespace Serilog.Filters.Expressions.Compilation.Linq
         protected override Expression<CompiledFilterExpression> Transform(FilterWildcardExpression wx)
         {
             return context => Undefined.Value;
+        }
+
+        protected override Expression<CompiledFilterExpression> Transform(FilterArrayExpression ax)
+        {
+            var context = Expression.Parameter(typeof(LogEvent));
+            var elements = ax.Elements.Select(Transform).Select(ex => Splice(ex, context)).ToArray();
+            var arr = Expression.NewArrayInit(typeof(object), elements);
+            var sv = Expression.Call(OperatorMethods[Operators.RuntimeOpNewSequence], arr);
+            return Expression.Lambda<CompiledFilterExpression>(Expression.Convert(sv, typeof(object)), context);
         }
     }
 }

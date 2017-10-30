@@ -27,6 +27,8 @@ namespace Serilog.Filters.Expressions.Parsing
         static readonly TokenListParser<FilterExpressionToken, string> Not = Token.EqualTo(FilterExpressionToken.Not).Value(Operators.OpNot);
         static readonly TokenListParser<FilterExpressionToken, string> Like = Token.EqualTo(FilterExpressionToken.Like).Value(Operators.IntermediateOpSqlLike);
         static readonly TokenListParser<FilterExpressionToken, string> NotLike = Not.IgnoreThen(Like).Value(Operators.IntermediateOpSqlNotLike);
+        static readonly TokenListParser<FilterExpressionToken, string> In = Token.EqualTo(FilterExpressionToken.In).Value(Operators.RuntimeOpSqlIn);
+        static readonly TokenListParser<FilterExpressionToken, string> NotIn = Not.IgnoreThen(In).Value(Operators.IntermediateOpSqlNotIn);
         static readonly TokenListParser<FilterExpressionToken, string> Is = Token.EqualTo(FilterExpressionToken.Is).Value(Operators.IntermediateOpSqlIs);
 
         static readonly TokenListParser<FilterExpressionToken, Func<FilterExpression, FilterExpression>> PropertyPathStep =
@@ -46,10 +48,16 @@ namespace Serilog.Filters.Expressions.Parsing
 
         static readonly TokenListParser<FilterExpressionToken, FilterExpression> Function =
             (from name in Token.EqualTo(FilterExpressionToken.Identifier)
-             from lparen in Token.EqualTo(FilterExpressionToken.LParen)
-             from expr in Parse.Ref(() => Expr).ManyDelimitedBy(Token.EqualTo(FilterExpressionToken.Comma))
+            from lparen in Token.EqualTo(FilterExpressionToken.LParen)
+                from expr in Parse.Ref(() => Expr).ManyDelimitedBy(Token.EqualTo(FilterExpressionToken.Comma))
              from rparen in Token.EqualTo(FilterExpressionToken.RParen)
-             select (FilterExpression)new FilterCallExpression(name.ToStringValue(), expr)).Named("function");
+            select (FilterExpression)new FilterCallExpression(name.ToStringValue(), expr)).Named("function");
+
+        static readonly TokenListParser<FilterExpressionToken, FilterExpression> ArrayLiteral =
+        (from lbracket in Token.EqualTo(FilterExpressionToken.LBracket)
+            from expr in Parse.Ref(() => Expr).ManyDelimitedBy(Token.EqualTo(FilterExpressionToken.Comma))
+            from rbracket in Token.EqualTo(FilterExpressionToken.RBracket)
+            select (FilterExpression)new FilterArrayExpression(expr)).Named("array");
 
         static readonly TokenListParser<FilterExpressionToken, FilterExpression> RootProperty =
             Token.EqualTo(FilterExpressionToken.BuiltInIdentifier).Select(b => (FilterExpression)new FilterPropertyExpression(b.ToStringValue().Substring(1), true))
@@ -96,7 +104,7 @@ namespace Serilog.Filters.Expressions.Parsing
                 .Or(Token.EqualTo(FilterExpressionToken.Null).Value((FilterExpression)new FilterConstantExpression(null)))
                 .Named("literal");
 
-        static readonly TokenListParser<FilterExpressionToken, FilterExpression> Item = Literal.Or(PropertyPath).Or(Function);
+        static readonly TokenListParser<FilterExpressionToken, FilterExpression> Item = Literal.Or(PropertyPath).Or(Function).Or(ArrayLiteral);
 
         static readonly TokenListParser<FilterExpressionToken, FilterExpression> Factor =
             (from lparen in Token.EqualTo(FilterExpressionToken.LParen)
@@ -116,7 +124,7 @@ namespace Serilog.Filters.Expressions.Parsing
 
         static readonly TokenListParser<FilterExpressionToken, FilterExpression> Comparand = Parse.Chain(Add.Or(Subtract), Term, MakeBinary);
 
-        static readonly TokenListParser<FilterExpressionToken, FilterExpression> Comparison = Parse.Chain(Is.Or(NotLike.Try().Or(Like)).Or(Lte.Or(Neq).Or(Lt)).Or(Gte.Or(Gt)).Or(Eq), Comparand, MakeBinary);
+        static readonly TokenListParser<FilterExpressionToken, FilterExpression> Comparison = Parse.Chain(Is.Or(NotLike.Try().Or(Like)).Or(NotIn.Try().Or(In)).Or(Lte.Or(Neq).Or(Lt)).Or(Gte.Or(Gt)).Or(Eq), Comparand, MakeBinary);
 
         static readonly TokenListParser<FilterExpressionToken, FilterExpression> Conjunction = Parse.Chain(And, Comparison, MakeBinary);
 

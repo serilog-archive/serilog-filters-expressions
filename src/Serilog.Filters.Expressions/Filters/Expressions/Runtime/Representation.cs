@@ -63,5 +63,10 @@ namespace Serilog.Filters.Expressions.Runtime
 
             return internalValue;
         }
+
+        public static LogEventPropertyValue Recapture(object value)
+        {
+            return value is LogEventPropertyValue lepv ? lepv : new ScalarValue(value);
+        }
     }
 }

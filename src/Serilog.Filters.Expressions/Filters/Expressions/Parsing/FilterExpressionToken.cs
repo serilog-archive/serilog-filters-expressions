@@ -81,7 +81,10 @@ namespace Serilog.Filters.Expressions.Parsing
 
         [Token(Category = "keyword", Example = "and")]
         And,
-            
+
+        [Token(Category = "keyword", Example = "in")]
+        In,
+
         [Token(Category = "keyword", Example = "is")]
         Is,
 
