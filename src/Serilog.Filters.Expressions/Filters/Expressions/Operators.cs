@@ -62,8 +62,11 @@ namespace Serilog.Filters.Expressions
         public const string IntermediateOpSqlLike = "_Internal_Like";
         public const string IntermediateOpSqlNotLike = "_Internal_NotLike";
         public const string IntermediateOpSqlIs = "_Internal_Is";
+        public const string RuntimeOpSqlIn = "_Internal_In";
+        public const string IntermediateOpSqlNotIn = "_Internal_NotIn";
         public const string RuntimeOpStrictNot = "_Internal_StrictNot";
         public const string OpSubstring = "Substring";
+        public const string RuntimeOpNewSequence = "_Internal_NewSequence";
 
         // Breaks the symmetry because there's no other way to express this in SQL.
         public const string OpIndexOfIgnoreCase = "IndexOfIgnoreCase";
@@ -81,6 +84,8 @@ namespace Serilog.Filters.Expressions
             OpGreaterThanOrEqual,
             IntermediateOpSqlLike,
             IntermediateOpSqlNotLike,
+            RuntimeOpSqlIn,
+            IntermediateOpSqlNotIn,
             IntermediateOpSqlIs
         };
 
@@ -105,6 +110,8 @@ namespace Serilog.Filters.Expressions
             OpGreaterThanOrEqual,
             IntermediateOpSqlLike,
             IntermediateOpSqlNotLike,
+            RuntimeOpSqlIn,
+            IntermediateOpSqlNotIn,
             IntermediateOpSqlIs
         };
 

@@ -23,12 +23,14 @@ namespace Serilog.Filters.Expressions.Parsing
             FilterExpressionToken.GreaterThanOrEqual,
             FilterExpressionToken.LessThan,
             FilterExpressionToken.LessThanOrEqual,
+            FilterExpressionToken.In,
             FilterExpressionToken.Is
         };
 
         static readonly FilterExpressionKeyword[] SqlKeywords =
         {
             new FilterExpressionKeyword("and", FilterExpressionToken.And),
+            new FilterExpressionKeyword("in", FilterExpressionToken.In),
             new FilterExpressionKeyword("is", FilterExpressionToken.Is),
             new FilterExpressionKeyword("like", FilterExpressionToken.Like),
             new FilterExpressionKeyword("not", FilterExpressionToken.Not),

@@ -1,4 +1,5 @@
 ﻿using System;
+using Serilog.Filters.Expressions.Parsing;
 using Xunit;
 
 namespace Serilog.Filters.Expressions.Tests
@@ -30,11 +31,13 @@ namespace Serilog.Filters.Expressions.Tests
         [InlineData("equal(AProperty[*].Description,1)", null)]
         [InlineData("equal(AProperty[ * ].Description,1)", "equal(AProperty[*].Description,1)")]
         [InlineData("AProperty like '%foo'", "_Internal_Like(AProperty,@\"%foo\")")]
-        [InlineData("A is null", "_Internal_Is(A,null)")]
+        [InlineData("AProperty not like '%foo'", "_Internal_NotLike(AProperty,@\"%foo\")")]
         [InlineData("A is null", "_Internal_Is(A,null)")]
         [InlineData("A IS NOT NULL", "_Internal_Is(A,Not(null))")]
         [InlineData("A is not null or B", "Or(_Internal_Is(A,Not(null)),B)")]
         [InlineData("@EventType = 0xC0ffee", "Equal(@EventType,12648430)")]
+        [InlineData("@Level in ['Error', 'Warning']", "_Internal_In(@Level,[@\"Error\",@\"Warning\"])")]
+        [InlineData("5 not in [1, 2]", "_Internal_NotIn(5,[1,2])")]
         public void ValidSyntaxIsAccepted(string input, string expected = null)
         {
             var roundTrip = FilterExpressionParser.Parse(input).ToString();

@@ -1,6 +1,5 @@
 ﻿using Serilog.Events;
 using Serilog.Filters.Expressions.Compilation.Linq;
-using Serilog.Serilog.Filters.Expressions.Runtime;
 using System;
 using System.Globalization;
 using System.Linq;
@@ -94,16 +93,38 @@ namespace Serilog.Filters.Expressions.Runtime
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object GreaterThanOrEqual(object left, object right)
         {
-            return ((decimal)left) >= ((decimal)right);
+            return (decimal)left >= (decimal)right;
         }
 
         [AcceptNull]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object Equal(object left, object right)
         {
-            return left == null ? right == null : left.Equals(right);
+            return UnboxedEqualHelper(left, right);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        static bool UnboxedEqualHelper(object left, object right)
+        {
+            return left?.Equals(right) ?? right == null;
+        }
+
+        [AcceptNull]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static object _Internal_In(object item, object collection)
+        {
+            if (collection is SequenceValue arr)
+            {
+                for (var i = 0; i < arr.Elements.Count; ++i)
+                    if (UnboxedEqualHelper(Representation.Represent(arr.Elements[i]), item))
+                        return true;
+
+                return false;
+            }
+
+            return Undefined.Value;
+        }
+        
         [AcceptNull]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object _Internal_EqualIgnoreCase(object left, object right)
@@ -138,7 +159,7 @@ namespace Serilog.Filters.Expressions.Runtime
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object NotEqual(object left, object right)
         {
-            return !(bool)Equal(left, right);
+            return !UnboxedEqualHelper(left, right);
         }
 
         [AcceptNull]
@@ -252,12 +273,15 @@ namespace Serilog.Filters.Expressions.Runtime
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static object Length(object corpus)
+        public static object Length(object arg)
         {
-            var ctx = corpus as string;
-            if (ctx == null)
-                return Undefined.Value;
-            return (decimal)ctx.Length;
+            if (arg is string str)
+                return (decimal)str.Length;
+
+            if (arg is SequenceValue seq)
+                return (decimal) seq.Elements.Count;
+
+            return Undefined.Value;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -335,8 +359,7 @@ namespace Serilog.Filters.Expressions.Runtime
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object ElementAt(object items, object index)
         {
-            var arr = items as SequenceValue;
-            if (arr != null)
+            if (items is SequenceValue arr)
             {
                 if (!(index is decimal))
                     return Undefined.Value;
@@ -346,14 +369,13 @@ namespace Serilog.Filters.Expressions.Runtime
                     return Undefined.Value;
 
                 var idx = (int)dec;
-                if (idx >= arr.Elements.Count())
+                if (idx >= arr.Elements.Count)
                     return Undefined.Value;
 
                 return Representation.Represent(arr.Elements.ElementAt(idx));
             }
-
-            var dict = items as StructureValue;
-            if (dict != null)
+            
+            if (items is StructureValue dict)
             {
                 var s = index as string;
                 if (s == null)
@@ -366,24 +388,23 @@ namespace Serilog.Filters.Expressions.Runtime
                 return Representation.Represent(value);
             }
 
+            // Case for DictionaryValue is missing, here.
+
             return Undefined.Value;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object _Internal_Any(object items, object predicate)
         {
-            var pred = predicate as Func<object, object>;
-            if (pred == null)
+            if (!(predicate is Func<object, object> pred))
                 return Undefined.Value;
 
-            SequenceValue arr = items as SequenceValue;
-            if (arr != null)
+            if (items is SequenceValue arr)
             {
                 return arr.Elements.Any(e => true.Equals(pred(Representation.Represent(e))));
             }
 
-            var structure = items as StructureValue;
-            if (structure != null)
+            if (items is StructureValue structure)
             {
                 return structure.Properties.Any(e => true.Equals(pred(Representation.Represent(e.Value))));
             }
@@ -413,14 +434,35 @@ namespace Serilog.Filters.Expressions.Runtime
             return Undefined.Value;
         }
 
+        [AcceptNull, AcceptUndefined]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object TypeOf(object value)
         {
-            var dict = value as StructureValue;
-            if (dict == null)
-                return Undefined.Value;
+            if (value is DictionaryValue)
+                return "object"; // Follow the JSON system here
 
-            return dict.TypeTag;
+            if (value is StructureValue structure)
+                return structure.TypeTag ?? "object";
+
+            if (value is SequenceValue)
+                return "array";
+
+            if (value is string)
+                return "string";
+
+            if (value is decimal)
+                return "number";
+
+            if (value is bool)
+                return "boolean";
+
+            if (value is Undefined)
+                return "undefined";
+
+            if (value == null)
+                return "null";
+
+            return Undefined.Value;
         }
 
         [AcceptUndefined, AcceptNull]
@@ -471,6 +513,15 @@ namespace Serilog.Filters.Expressions.Runtime
                 return str.Substring((int)si);
 
             return str.Substring((int)si, (int)len);
+        }
+
+        // This helper method is not called as an operator; rather, we use it
+        // to avoid uglier LINQ expression code to create array literals in
+        // `LinqExpressionCompiler`.
+        public static SequenceValue _Internal_NewSequence(object[] arr)
+        {
+            if (arr == null) throw new ArgumentNullException(nameof(arr));
+            return new SequenceValue(arr.Select(Representation.Recapture));
         }
     }
 }

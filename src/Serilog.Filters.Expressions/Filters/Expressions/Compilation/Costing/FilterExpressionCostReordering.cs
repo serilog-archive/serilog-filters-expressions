@@ -1,6 +1,5 @@
 ﻿using Serilog.Filters.Expressions.Ast;
 using Serilog.Filters.Expressions.Compilation.Transformations;
-using Superpower;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -133,6 +132,11 @@ namespace Serilog.Filters.Expressions.Compilation.Costing
             return new FilterExpressionCosting(
                 new FilterCallExpression(lx.OperatorName, operands.Select(o => o.Expression).ToArray()),
                 operands.Sum(o => o.Costing) + 0.1);
+        }
+
+        protected override FilterExpressionCosting Transform(FilterArrayExpression ax)
+        {
+            return new FilterExpressionCosting(ax, 0.2);
         }
     }
 }

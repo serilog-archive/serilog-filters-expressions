@@ -3,6 +3,7 @@ using Serilog.Filters.Expressions.Ast;
 using Serilog.Filters.Expressions.Compilation;
 using System;
 using System.Linq;
+using Serilog.Filters.Expressions.Parsing;
 
 namespace Serilog.Filters.Expressions
 {

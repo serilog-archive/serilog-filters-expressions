@@ -26,7 +26,7 @@ namespace Serilog.Filters.Expressions.Tests
             @switch.Expression = "Volume > 12";
 
             log.Write(v11);
-            Assert.Equal(0, sink.Events.Count);
+            Assert.Empty(sink.Events);
 
             @switch.Expression = "Volume > 10";
 

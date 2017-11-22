@@ -1,15 +1,11 @@
-﻿using Serilog.Filters.Expressions.Ast;
-using Serilog.Filters.Expressions.Parsing;
+﻿using System;
+using Serilog.Filters.Expressions.Ast;
 using Superpower;
-using System;
-using System.Collections.Generic;
 
-namespace Serilog.Filters.Expressions
+namespace Serilog.Filters.Expressions.Parsing
 {
     static class FilterExpressionParser
     {
-        static readonly FilterExpressionTokenizer _tokenizer = new FilterExpressionTokenizer();
-
         public static FilterExpression Parse(string filterExpression)
         {
             FilterExpression root;
@@ -24,9 +20,9 @@ namespace Serilog.Filters.Expressions
         {
             if (filterExpression == null) throw new ArgumentNullException(nameof(filterExpression));
 
-            var tokenList = _tokenizer.TryTokenize(filterExpression);
-
-            var errorList = new List<string>();
+            var tokenizer = new FilterExpressionTokenizer();
+            var tokenList = tokenizer.TryTokenize(filterExpression);
+            
             if (!tokenList.HasValue)
             {
                 error = tokenList.ToString();
