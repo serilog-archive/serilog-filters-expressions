@@ -147,7 +147,7 @@ namespace Serilog.Filters.Expressions.Tests
 
             log.Write(match);
 
-            Assert.Equal(1, sink.Events.Count);
+            Assert.Single(sink.Events);
             Assert.Same(match, sink.Events.Single());
         }
     }

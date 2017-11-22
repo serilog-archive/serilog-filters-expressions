@@ -33,7 +33,6 @@ namespace Serilog.Filters.Expressions.Tests
         [InlineData("AProperty like '%foo'", "_Internal_Like(AProperty,@\"%foo\")")]
         [InlineData("AProperty not like '%foo'", "_Internal_NotLike(AProperty,@\"%foo\")")]
         [InlineData("A is null", "_Internal_Is(A,null)")]
-        [InlineData("A is null", "_Internal_Is(A,null)")]
         [InlineData("A IS NOT NULL", "_Internal_Is(A,Not(null))")]
         [InlineData("A is not null or B", "Or(_Internal_Is(A,Not(null)),B)")]
         [InlineData("@EventType = 0xC0ffee", "Equal(@EventType,12648430)")]
