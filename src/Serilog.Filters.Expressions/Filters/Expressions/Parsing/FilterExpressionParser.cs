@@ -6,8 +6,6 @@ namespace Serilog.Filters.Expressions.Parsing
 {
     static class FilterExpressionParser
     {
-        static readonly FilterExpressionTokenizer Tokenizer = new FilterExpressionTokenizer();
-
         public static FilterExpression Parse(string filterExpression)
         {
             FilterExpression root;
@@ -22,7 +20,8 @@ namespace Serilog.Filters.Expressions.Parsing
         {
             if (filterExpression == null) throw new ArgumentNullException(nameof(filterExpression));
 
-            var tokenList = Tokenizer.TryTokenize(filterExpression);
+            var tokenizer = new FilterExpressionTokenizer();
+            var tokenList = tokenizer.TryTokenize(filterExpression);
             
             if (!tokenList.HasValue)
             {
