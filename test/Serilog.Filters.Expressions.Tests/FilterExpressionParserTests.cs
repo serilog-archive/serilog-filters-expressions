@@ -59,5 +59,16 @@ namespace Serilog.Filters.Expressions.Tests
         {
             Assert.Throws<ArgumentException>(() => FilterExpressionParser.Parse(input));
         }
+
+        [Theory]
+        [InlineData("A = 'b", "Syntax error: unexpected end of input, expected `'`.")]
+        [InlineData("A or B) and C", "Syntax error (line 1, column 7): unexpected `)`.")]
+        [InlineData("A lik3 C", "Syntax error (line 1, column 3): unexpected identifier `lik3`.")]
+        [InlineData("A > 1234f", "Syntax error (line 1, column 9): unexpected `f`, expected digit.")]
+        public void PreciseErrorsAreReported(string input, string expectedMessage)
+        {
+            var ex = Assert.Throws<ArgumentException>(() => FilterExpressionParser.Parse(input));
+            Assert.Equal(expectedMessage, ex.Message);
+        }
     }
 }

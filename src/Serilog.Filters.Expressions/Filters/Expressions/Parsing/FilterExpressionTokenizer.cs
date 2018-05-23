@@ -61,7 +61,9 @@ namespace Serilog.Filters.Expressions.Parsing
             SimpleOps['?'] = FilterExpressionToken.QuestionMark;
         }
 
-        protected override IEnumerable<Result<FilterExpressionToken>> Tokenize(TextSpan stringSpan)
+        protected override IEnumerable<Result<FilterExpressionToken>> Tokenize(
+            TextSpan stringSpan,
+            TokenizationState<FilterExpressionToken> tokenizationState)
         {
             var next = SkipWhiteSpace(stringSpan);
             if (!next.HasValue)
@@ -141,7 +143,9 @@ namespace Serilog.Filters.Expressions.Parsing
                         yield return Result.Value(FilterExpressionToken.Identifier, beginIdentifier, next.Location);
                     }
                 }
-                else if (next.Value == '/' && (!Previous.HasValue || PreRegexTokens.Contains(Previous.Kind)))
+                else if (next.Value == '/' && 
+                         (!tokenizationState.Previous.HasValue || 
+                            PreRegexTokens.Contains(tokenizationState.Previous.Value.Kind)))
                 {
                     var regex = FilterExpressionTextParsers.RegularExpression(next.Location);
                     if (!regex.HasValue)
