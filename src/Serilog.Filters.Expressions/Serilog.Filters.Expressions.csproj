@@ -23,7 +23,7 @@
 
   <ItemGroup>
     <PackageReference Include="Serilog" Version="2.7.1" />
-    <PackageReference Include="Superpower" Version="2.0.0-*" />
+    <PackageReference Include="Superpower" Version="2.0.0" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net4.5' ">
