@@ -9,7 +9,7 @@ namespace Serilog.Filters.Expressions.Tests
         public void AssemblyVersionIsSet()
         {
             var version = typeof(LoggerFilterConfigurationExtensions).GetTypeInfo().Assembly.GetName().Version;
-            Assert.Equal("1", version.ToString(1));
+            Assert.Equal("2", version.ToString(1));
         }
     }
 }
