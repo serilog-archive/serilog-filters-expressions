@@ -4,11 +4,18 @@ using Superpower.Parsers;
 using System;
 using System.Globalization;
 using System.Linq;
+using Superpower.Model;
 
 namespace Serilog.Filters.Expressions.Parsing
 {
     static class FilterExpressionTokenParsers
     {
+        public static TokenListParserResult<FilterExpressionToken, FilterExpression> TryParse(
+            TokenList<FilterExpressionToken> input)
+        {
+            return Expr.AtEnd().TryParse(input);
+        }
+
         static readonly TokenListParser<FilterExpressionToken, string> Add = Token.EqualTo(FilterExpressionToken.Plus).Value(Operators.OpAdd);
         static readonly TokenListParser<FilterExpressionToken, string> Subtract = Token.EqualTo(FilterExpressionToken.Minus).Value(Operators.OpSubtract);
         static readonly TokenListParser<FilterExpressionToken, string> Multiply = Token.EqualTo(FilterExpressionToken.Asterisk).Value(Operators.OpMultiply);
@@ -130,7 +137,7 @@ namespace Serilog.Filters.Expressions.Parsing
 
         static readonly TokenListParser<FilterExpressionToken, FilterExpression> Disjunction = Parse.Chain(Or, Conjunction, MakeBinary);
 
-        public static readonly TokenListParser<FilterExpressionToken, FilterExpression> Expr = Disjunction;
+        static readonly TokenListParser<FilterExpressionToken, FilterExpression> Expr = Disjunction;
 
         static FilterExpression MakeBinary(string operatorName, FilterExpression leftOperand, FilterExpression rightOperand)
         {

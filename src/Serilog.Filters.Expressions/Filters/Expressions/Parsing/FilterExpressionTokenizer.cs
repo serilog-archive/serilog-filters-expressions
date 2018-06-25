@@ -27,7 +27,7 @@ namespace Serilog.Filters.Expressions.Parsing
             FilterExpressionToken.Is
         };
 
-        static readonly FilterExpressionKeyword[] SqlKeywords =
+        static readonly FilterExpressionKeyword[] Keywords =
         {
             new FilterExpressionKeyword("and", FilterExpressionToken.And),
             new FilterExpressionKeyword("in", FilterExpressionToken.In),
@@ -61,7 +61,9 @@ namespace Serilog.Filters.Expressions.Parsing
             SimpleOps['?'] = FilterExpressionToken.QuestionMark;
         }
 
-        protected override IEnumerable<Result<FilterExpressionToken>> Tokenize(TextSpan stringSpan)
+        protected override IEnumerable<Result<FilterExpressionToken>> Tokenize(
+            TextSpan stringSpan,
+            TokenizationState<FilterExpressionToken> tokenizationState)
         {
             var next = SkipWhiteSpace(stringSpan);
             if (!next.HasValue)
@@ -88,7 +90,7 @@ namespace Serilog.Filters.Expressions.Parsing
                         next = real.Remainder.ConsumeChar();
                     }
 
-                    if (next.HasValue && !char.IsPunctuation(next.Value) && !char.IsWhiteSpace(next.Value))
+                    if (!IsDelimiter(next))
                     {
                         yield return Result.Empty<FilterExpressionToken>(next.Location, new[] { "digit" });
                     }
@@ -141,7 +143,9 @@ namespace Serilog.Filters.Expressions.Parsing
                         yield return Result.Value(FilterExpressionToken.Identifier, beginIdentifier, next.Location);
                     }
                 }
-                else if (next.Value == '/' && (!Previous.HasValue || PreRegexTokens.Contains(Previous.Kind)))
+                else if (next.Value == '/' && 
+                         (!tokenizationState.Previous.HasValue || 
+                            PreRegexTokens.Contains(tokenizationState.Previous.Value.Kind)))
                 {
                     var regex = FilterExpressionTextParsers.RegularExpression(next.Location);
                     if (!regex.HasValue)
@@ -174,9 +178,16 @@ namespace Serilog.Filters.Expressions.Parsing
             } while (next.HasValue);
         }
 
+        static bool IsDelimiter(Result<char> next)
+        {
+            return !next.HasValue ||
+                   char.IsWhiteSpace(next.Value) ||
+                   next.Value < SimpleOps.Length && SimpleOps[next.Value] != FilterExpressionToken.None;
+        }
+
         static bool TryGetKeyword(TextSpan span, out FilterExpressionToken keyword)
         {
-            foreach (var kw in SqlKeywords)
+            foreach (var kw in Keywords)
             {
                 if (span.EqualsValueIgnoreCase(kw.Text))
                 {
@@ -188,5 +199,7 @@ namespace Serilog.Filters.Expressions.Parsing
             keyword = FilterExpressionToken.None;
             return false;
         }
+        
+        public static FilterExpressionTokenizer Instance { get; } = new FilterExpressionTokenizer();
     }
 }
