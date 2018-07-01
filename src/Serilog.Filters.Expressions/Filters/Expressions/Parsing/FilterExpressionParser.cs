@@ -1,6 +1,5 @@
 ﻿using System;
 using Serilog.Filters.Expressions.Ast;
-using Superpower;
 
 namespace Serilog.Filters.Expressions.Parsing
 {
@@ -8,9 +7,7 @@ namespace Serilog.Filters.Expressions.Parsing
     {
         public static FilterExpression Parse(string filterExpression)
         {
-            FilterExpression root;
-            string error;
-            if (!TryParse(filterExpression, out root, out error))
+            if (!TryParse(filterExpression, out var root, out var error))
                 throw new ArgumentException(error);
 
             return root;
@@ -20,9 +17,7 @@ namespace Serilog.Filters.Expressions.Parsing
         {
             if (filterExpression == null) throw new ArgumentNullException(nameof(filterExpression));
 
-            var tokenizer = new FilterExpressionTokenizer();
-            var tokenList = tokenizer.TryTokenize(filterExpression);
-            
+            var tokenList = FilterExpressionTokenizer.Instance.TryTokenize(filterExpression);       
             if (!tokenList.HasValue)
             {
                 error = tokenList.ToString();
@@ -30,7 +25,7 @@ namespace Serilog.Filters.Expressions.Parsing
                 return false;
             }
 
-            var result = FilterExpressionTokenParsers.Expr.AtEnd().TryParse(tokenList.Value);
+            var result = FilterExpressionTokenParsers.TryParse(tokenList.Value);
             if (!result.HasValue)
             {
                 error = result.ToString();

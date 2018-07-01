@@ -38,6 +38,7 @@ namespace Serilog.Filters.Expressions.Tests
         [InlineData("@EventType = 0xC0ffee", "Equal(@EventType,12648430)")]
         [InlineData("@Level in ['Error', 'Warning']", "_Internal_In(@Level,[@\"Error\",@\"Warning\"])")]
         [InlineData("5 not in [1, 2]", "_Internal_NotIn(5,[1,2])")]
+        [InlineData("1+1", "Add(1,1)")]
         public void ValidSyntaxIsAccepted(string input, string expected = null)
         {
             var roundTrip = FilterExpressionParser.Parse(input).ToString();
@@ -58,6 +59,17 @@ namespace Serilog.Filters.Expressions.Tests
         public void InvalidSyntaxIsRejected(string input)
         {
             Assert.Throws<ArgumentException>(() => FilterExpressionParser.Parse(input));
+        }
+
+        [Theory]
+        [InlineData("A = 'b", "Syntax error: unexpected end of input, expected `'`.")]
+        [InlineData("A or B) and C", "Syntax error (line 1, column 7): unexpected `)`.")]
+        [InlineData("A lik3 C", "Syntax error (line 1, column 3): unexpected identifier `lik3`.")]
+        [InlineData("A > 1234f", "Syntax error (line 1, column 9): unexpected `f`, expected digit.")]
+        public void PreciseErrorsAreReported(string input, string expectedMessage)
+        {
+            var ex = Assert.Throws<ArgumentException>(() => FilterExpressionParser.Parse(input));
+            Assert.Equal(expectedMessage, ex.Message);
         }
     }
 }

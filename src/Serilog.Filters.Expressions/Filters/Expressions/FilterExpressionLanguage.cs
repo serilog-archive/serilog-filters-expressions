@@ -1,5 +1,4 @@
 ﻿using Serilog.Events;
-using Serilog.Filters.Expressions.Ast;
 using Serilog.Filters.Expressions.Compilation;
 using System;
 using System.Linq;
@@ -19,9 +18,7 @@ namespace Serilog.Filters.Expressions
         /// <returns>A function that evaluates the expression in the context of the log event.</returns>
         public static Func<LogEvent, object> CreateFilter(string expression)
         {
-            Func<LogEvent, object> filter;
-            string error;
-            if (!TryCreateFilter(expression, out filter, out error))
+            if (!TryCreateFilter(expression, out var filter, out var error))
                 throw new ArgumentException(error);
 
             return filter;
@@ -36,8 +33,7 @@ namespace Serilog.Filters.Expressions
         /// <returns>True if the filter could be created; otherwise, false.</returns>
         public static bool TryCreateFilter(string expression, out Func<LogEvent, object> filter, out string error)
         {
-            FilterExpression root;
-            if (!FilterExpressionParser.TryParse(expression, out root, out error))
+            if (!FilterExpressionParser.TryParse(expression, out var root, out error))
             {
                 filter = null;
                 return false;
@@ -54,6 +50,7 @@ namespace Serilog.Filters.Expressions
         /// <param name="text">The text to escape.</param>
         /// <returns>The text with any special values escaped. Will need to be passed through
         /// <see cref="EscapeStringContent(string)"/> if it is being embedded directly into a filter expression.</returns>
+        // ReSharper disable once UnusedMember.Global
         public static string EscapeLikeExpressionContent(string text)
         {
             if (text == null) throw new ArgumentNullException(nameof(text));
