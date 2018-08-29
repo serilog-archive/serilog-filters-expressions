@@ -74,5 +74,4 @@ Using [_Serilog.Settings.Configuration_](https://github.com/serilog/serilog-sett
         }
       }
     ]
-    ...
 ```
