@@ -49,13 +49,30 @@ The syntax is based on SQL, with added support for object structures, arrays, an
 | **Grouping** | `A * (B + C)` |
 | **Other** | `Has(A)`, `TypeOf(A)` |
 
-### XML configuration
+### XML `<appSettings>` configuration
 
-Note, the syntax below depends on features in Serilog 2.4+.
+Using [_Serilog.Settings.AppSettings](https://github.com/serilog/serilog-settings-appsettings):
 
 ```xml
   <add key="serilog:using:FilterExpressions" value="Serilog.Filters.Expressions" />
   <add key="serilog:filter:ByExcluding.expression" value="Name = 'World'" />
 ```
 
+### JSON `appSettings.json` configuration
 
+Using [_Serilog.Settings.Configuration_](https://github.com/serilog/serilog-settings-configuration):
+
+```json
+{
+  "Serilog": {
+    "Using": ["Serilog.Settings.Configuration"],
+    "Filter": [
+      {
+        "Name": "ByExcluding",
+        "Args": {
+          "expression": "EndsWith(RequestPath, '/SomeEndpoint')"
+        }
+      }
+    ]
+    ...
+```
