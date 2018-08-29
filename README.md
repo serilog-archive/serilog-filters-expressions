@@ -51,7 +51,7 @@ The syntax is based on SQL, with added support for object structures, arrays, an
 
 ### XML `<appSettings>` configuration
 
-Using [_Serilog.Settings.AppSettings](https://github.com/serilog/serilog-settings-appsettings):
+Using [_Serilog.Settings.AppSettings_](https://github.com/serilog/serilog-settings-appsettings):
 
 ```xml
   <add key="serilog:using:FilterExpressions" value="Serilog.Filters.Expressions" />
