@@ -17,6 +17,8 @@
     <PackageIconUrl>https://serilog.net/images/serilog-extension-nuget.png</PackageIconUrl>
     <PackageProjectUrl>https://github.com/serilog/serilog-filters-expressions</PackageProjectUrl>
     <PackageLicenseUrl>https://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/serilog/serilog-filters-expressions</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
     <DisableImplicitFrameworkReferences Condition=" '$(TargetFramework)' == 'net4.5' ">True</DisableImplicitFrameworkReferences>
     <NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard1.5' ">1.6.1</NetStandardImplicitPackageVersion>
   </PropertyGroup>
