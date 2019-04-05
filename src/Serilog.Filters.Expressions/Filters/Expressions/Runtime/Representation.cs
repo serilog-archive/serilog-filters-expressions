@@ -44,12 +44,12 @@ namespace Serilog.Filters.Expressions.Runtime
 
             var sequence = internalValue as SequenceValue;
             if (sequence != null)
-                return sequence.Elements.Select(Expose).ToArray();
+                return sequence.Elements.Select(ExposeOrRepresent).ToArray();
 
             var structure = internalValue as StructureValue;
             if (structure != null)
             {
-                var r = structure.Properties.ToDictionary(p => p.Name, p => Expose(p.Value));
+                var r = structure.Properties.ToDictionary(p => p.Name, p => ExposeOrRepresent(p.Value));
                 if (structure.TypeTag != null)
                     r["$type"] = structure.TypeTag;
                 return r;
@@ -58,10 +58,21 @@ namespace Serilog.Filters.Expressions.Runtime
             var dictionary = internalValue as DictionaryValue;
             if (dictionary != null)
             {
-                return dictionary.Elements.ToDictionary(p => Expose(p.Key), p => Expose(p.Value));
+                return dictionary.Elements.ToDictionary(p => ExposeOrRepresent(p.Key), p => ExposeOrRepresent(p.Value));
             }
 
             return internalValue;
+        }
+
+        static object ExposeOrRepresent(object internalValue)
+        {
+            if (internalValue is Undefined)
+                return null;
+
+            if (internalValue is ScalarValue sv)
+                return Represent(sv);
+
+            return Expose(internalValue);
         }
 
         public static LogEventPropertyValue Recapture(object value)
