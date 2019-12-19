@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <Description>Expression-based event filtering for Serilog.</Description>
@@ -24,7 +24,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Serilog" Version="2.9.0-dev-*" />
+    <PackageReference Include="Serilog" Version="2.9.0" />
     <PackageReference Include="Superpower" Version="2.3.0" />
   </ItemGroup>
 
