@@ -5,7 +5,7 @@ using System;
 namespace Serilog
 {
     /// <summary>
-    /// Extends logger configuration with methods for filtering with expressions.
+    /// Extends logger filter configuration with methods for filtering with expressions.
     /// </summary>
     public static class LoggerFilterConfigurationExtensions
     {
