@@ -1,4 +1,5 @@
-﻿using Serilog.Events;
+﻿using System.Collections.Generic;
+using Serilog.Events;
 using Serilog.Filters.Expressions.Tests.Support;
 using System.Linq;
 using Xunit;
@@ -149,6 +150,16 @@ namespace Serilog.Filters.Expressions.Tests
 
             Assert.Single(sink.Events);
             Assert.Same(match, sink.Events.Single());
+        }
+
+        [Fact]
+        public void StructuresAreExposedAsDictionaries()
+        {
+            var evt = Some.InformationEvent("{@Person}", new { Name = "nblumhardt" });
+            var expr = FilterLanguage.CreateFilter("Person");
+            var val = expr(evt);
+            var dict = Assert.IsType<Dictionary<string, object>>(val);
+            Assert.Equal("nblumhardt", dict["Name"]);
         }
     }
 }
