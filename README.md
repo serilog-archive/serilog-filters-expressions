@@ -2,6 +2,8 @@
 
 Expression-based event filtering for [Serilog](https://serilog.net).
 
+> **Note:** this package is being replaced by [_Serilog.Expressions_](https://github.com/serilog/serilog-expressions), which is now feature-complete. If you have the opportunity to give the new package a try, we'd love your feedback.
+
 ```csharp
 var expr = "@Level = 'Information' and AppId is not null and Items[?] like 'C%'";
 
